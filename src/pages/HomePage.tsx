@@ -163,9 +163,14 @@ const HomePage: React.FC = () => {
             <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl">
               <SearchFilters
                 filters={filters}
-                onFiltersChange={setFilters}
+                onFiltersChange={(newFilters) => {
+                  console.log('setFilters called with:', newFilters);
+                  setFilters(newFilters);
+                }}
                 onSearch={handleSearch}
                 showMainSearch={true}
+                showAdvancedFilters={showAdvancedFilters}
+                onToggleAdvancedFilters={() => setShowAdvancedFilters((prev) => !prev)}
               />
             </div>
           </div>
@@ -179,7 +184,10 @@ const HomePage: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-lg border border-amber-200 overflow-hidden">
               <SearchFilters
                 filters={filters}
-                onFiltersChange={setFilters}
+                onFiltersChange={(newFilters) => {
+                  console.log('setFilters called with:', newFilters);
+                  setFilters(newFilters);
+                }}
                 onSearch={handleSearch}
                 showMainSearch={false}
               />
@@ -203,16 +211,6 @@ const HomePage: React.FC = () => {
                 )}
               </h2>
             </div>
-            
-            <button
-              onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-              className="text-amber-600 hover:text-amber-700 font-medium text-sm bg-amber-50 px-4 py-2 rounded-full border border-amber-200 hover:border-amber-300 transition-all duration-300"
-            >
-              {showAdvancedFilters 
-                ? t('hide-advanced', 'উন্নত ফিল্টার লুকান', 'Hide Advanced')
-                : t('show-advanced', 'উন্নত ফিল্টার দেখান', 'Show Advanced')
-              }
-            </button>
           </div>
           
           <div className="flex items-center gap-2 bg-amber-50 rounded-xl p-1 border border-amber-200">

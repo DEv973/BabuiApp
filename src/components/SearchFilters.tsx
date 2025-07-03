@@ -3,19 +3,25 @@ import { Search, Filter, Users, Home as HomeIcon, Hash } from 'lucide-react';
 import { SearchFilters as SearchFiltersType } from '../types';
 import { useLanguage } from '../hooks/useLanguage';
 import BangladeshLocationSearch from './BangladeshLocationSearch';
+import { getDivisions, getDistrictsByDivision, getUpazilasByDistrict } from '../data/bd-geocode/locationUtils';
+import areaData from '../data/bd-geocode/area.json';
 
 interface SearchFiltersProps {
   filters: SearchFiltersType;
   onFiltersChange: (filters: SearchFiltersType) => void;
   onSearch: () => void;
   showMainSearch?: boolean;
+  showAdvancedFilters?: boolean;
+  onToggleAdvancedFilters?: () => void;
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = ({
   filters,
   onFiltersChange,
   onSearch,
-  showMainSearch = false
+  showMainSearch = false,
+  showAdvancedFilters = false,
+  onToggleAdvancedFilters
 }) => {
   const { language, t } = useLanguage();
 
@@ -57,71 +63,98 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   if (showMainSearch) {
     return (
       <div className="bg-white rounded-xl shadow-lg p-6">
-        {/* Property ID Search */}
-        <div className="mb-6">
-          <div className="relative">
-            <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-            <input
-              type="text"
-              placeholder={t('property-id-search', 'প্রপার্টি আইডি...', 'Property ID...')}
-              value={filters.propertyId || ''}
-              onChange={(e) => onFiltersChange({ ...filters, propertyId: e.target.value })}
-              className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 placeholder-gray-500"
-            />
-            <button
-              onClick={onSearch}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-teal-500 text-white p-2 rounded-lg hover:bg-teal-600 transition-colors"
-            >
-              <Search size={16} />
-            </button>
+        {/* Hierarchical Location Dropdowns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {/* Division Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('division', 'বিভাগ', 'Division')}
+            </label>
+            <div className="relative">
+              <select
+                value={filters.division || ''}
+                onChange={(e) => onFiltersChange({ ...filters, division: e.target.value, district: '', thana: '', area: '' })}
+                className="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent appearance-none text-gray-900 bg-white"
+              >
+                <option value="" className="text-gray-500">{t('select-division', 'বিভাগ নির্বাচন করুন', 'Select Division')}</option>
+                {getDivisions().map((division: any) => (
+                  <option key={division.id} value={division.id} className="text-gray-900">
+                    {language === 'bn' ? division.bn_name : division.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          {/* District Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('district', 'জেলা', 'District')}
+            </label>
+            <div className="relative">
+              <select
+                value={filters.district || ''}
+                onChange={(e) => onFiltersChange({ ...filters, district: e.target.value, thana: '', area: '' })}
+                className="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent appearance-none text-gray-900 bg-white"
+                disabled={!filters.division}
+              >
+                <option value="" className="text-gray-500">{t('select-district', 'জেলা নির্বাচন করুন', 'Select District')}</option>
+                {filters.division && getDistrictsByDivision(filters.division).map((district: any) => (
+                  <option key={district.id} value={district.id} className="text-gray-900">
+                    {language === 'bn' ? district.bn_name : district.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          {/* Thana/Area Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('thana', 'থানা', 'Thana/Area')}
+            </label>
+            <div className="relative">
+              <select
+                value={filters.thana || ''}
+                onChange={(e) => onFiltersChange({ ...filters, thana: e.target.value, area: '' })}
+                className="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent appearance-none text-gray-900 bg-white"
+                disabled={!filters.district}
+              >
+                <option value="" className="text-gray-500">{t('select-thana', 'থানা নির্বাচন করুন', 'Select Thana/Area')}</option>
+                {filters.district && getUpazilasByDistrict(filters.district).map((thana: any) => (
+                  <option key={thana.id} value={thana.id} className="text-gray-900">
+                    {language === 'bn' ? thana.bn_name : thana.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          {/* Sub Area Dropdown */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              {t('area', 'এলাকা', 'Sub Area')}
+            </label>
+            <div className="relative">
+              <select
+                value={filters.area || ''}
+                onChange={(e) => onFiltersChange({ ...filters, area: e.target.value })}
+                className="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent appearance-none text-gray-900 bg-white"
+                disabled={!filters.thana}
+              >
+                <option value="" className="text-gray-500">{t('select-area', 'এলাকা নির্বাচন করুন', 'Select Sub Area')}</option>
+                {filters.thana && (() => {
+                  const areaObj = areaData.find((item: any) => item.upazila_id === Number(filters.thana));
+                  if (!areaObj) return null;
+                  const areas = areaObj.areas || [];
+                  const bn_areas = areaObj.bn_areas || [];
+                  return areas.map((area: string, idx: number) => (
+                    <option key={area} value={area} className="text-gray-900">
+                      {language === 'bn' ? bn_areas[idx] || area : area}
+                    </option>
+                  ));
+                })()}
+              </select>
+            </div>
           </div>
         </div>
-
-        {/* OR Divider */}
-        <div className="relative mb-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white text-gray-500 font-medium">
-              {t('or', 'অথবা', 'OR')}
-            </span>
-          </div>
-        </div>
-
-        {/* Bangladesh Location Search */}
-        <div className="mb-6">
-          <BangladeshLocationSearch
-            selectedDivision={filters.division}
-            selectedDistrict={filters.district}
-            selectedThana={filters.thana}
-            selectedArea={filters.area}
-            onDivisionChange={(divisionId) => onFiltersChange({ 
-              ...filters, 
-              division: divisionId,
-              district: '',
-              thana: '',
-              area: '',
-              city: divisionId // Legacy compatibility
-            })}
-            onDistrictChange={(districtId) => onFiltersChange({ 
-              ...filters, 
-              district: districtId,
-              thana: '',
-              area: ''
-            })}
-            onThanaChange={(thanaId) => onFiltersChange({ 
-              ...filters, 
-              thana: thanaId,
-              area: ''
-            })}
-            onAreaChange={(areaId) => onFiltersChange({ 
-              ...filters, 
-              area: areaId
-            })}
-          />
-        </div>
-
         {/* Property Type and Price */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div>
@@ -159,8 +192,8 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
           </div>
         </div>
 
-        {/* Search Button */}
-        <div className="flex justify-center">
+        {/* Search and Show Advanced Button */}
+        <div className="flex justify-center gap-4">
           <button
             onClick={onSearch}
             className="bg-teal-500 hover:bg-teal-600 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center gap-2"
@@ -168,6 +201,16 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             <Search size={16} />
             {t('search', 'খুঁজুন', 'Search')}
           </button>
+          {typeof onToggleAdvancedFilters === 'function' && (
+            <button
+              onClick={onToggleAdvancedFilters}
+              className="text-amber-600 hover:text-amber-700 font-medium text-sm bg-amber-50 px-6 py-3 rounded-lg border border-amber-200 hover:border-amber-300 transition-all duration-300 flex items-center gap-2"
+            >
+              {showAdvancedFilters
+                ? t('hide-advanced', 'উন্নত ফিল্টার লুকান', 'Hide Advanced')
+                : t('show-advanced', 'উন্নত ফিল্টার দেখান', 'Show Advanced')}
+            </button>
+          )}
         </div>
       </div>
     );

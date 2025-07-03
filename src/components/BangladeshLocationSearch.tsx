@@ -4,16 +4,15 @@ import {
   getDivisions, 
   getDistrictsForDivision, 
   getThanasForDistrict, 
-  getAreasForThana,
   searchDivisions,
   searchDistricts,
   searchThanas,
-  searchAreas,
   Division,
   District,
   Thana,
   Area
 } from '../data/bangladeshLocations';
+import { getAreasByUpazilaId } from '../data/bd-geocode/locationUtils';
 import { useLanguage } from '../hooks/useLanguage';
 
 interface BangladeshLocationSearchProps {
@@ -65,15 +64,18 @@ const BangladeshLocationSearch: React.FC<BangladeshLocationSearchProps> = ({
 
   // Get data
   const divisions = searchDivisions(divisionQuery);
+  console.log('Division dropdown options:', divisions);
   const districts = selectedDivision ? searchDistricts(selectedDivision, districtQuery) : [];
   const thanas = selectedDistrict ? searchThanas(selectedDistrict, thanaQuery) : [];
-  const areas = selectedThana ? searchAreas(selectedThana, areaQuery) : [];
+  const areas = selectedThana ? getAreasByUpazilaId(Number(selectedThana)).filter(area =>
+    area.toLowerCase().includes(areaQuery.toLowerCase())
+  ) : [];
 
   // Get selected data
   const selectedDivisionData = getDivisions().find(d => d.id === selectedDivision);
   const selectedDistrictData = selectedDivision ? getDistrictsForDivision(selectedDivision).find(d => d.id === selectedDistrict) : null;
   const selectedThanaData = selectedDistrict ? getThanasForDistrict(selectedDistrict).find(t => t.id === selectedThana) : null;
-  const selectedAreaData = selectedThana ? getAreasForThana(selectedThana).find(a => a.id === selectedArea) : null;
+  const selectedAreaData = selectedArea;
 
   // Handle clicks outside - Fixed with proper event handling
   useEffect(() => {
@@ -101,13 +103,6 @@ const BangladeshLocationSearch: React.FC<BangladeshLocationSearchProps> = ({
 
   // Handle selections - Fixed with proper event handling
   const handleDivisionSelect = (divisionId: string, event?: React.MouseEvent) => {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    
-    console.log('Division selected:', divisionId); // Debug log
-    
     onDivisionChange(divisionId);
     setDivisionQuery('');
     setShowDivisionDropdown(false);
@@ -121,13 +116,6 @@ const BangladeshLocationSearch: React.FC<BangladeshLocationSearchProps> = ({
   };
 
   const handleDistrictSelect = (districtId: string, event?: React.MouseEvent) => {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    
-    console.log('District selected:', districtId); // Debug log
-    
     onDistrictChange(districtId);
     setDistrictQuery('');
     setShowDistrictDropdown(false);
@@ -139,13 +127,6 @@ const BangladeshLocationSearch: React.FC<BangladeshLocationSearchProps> = ({
   };
 
   const handleThanaSelect = (thanaId: string, event?: React.MouseEvent) => {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    
-    console.log('Thana selected:', thanaId); // Debug log
-    
     onThanaChange(thanaId);
     setThanaQuery('');
     setShowThanaDropdown(false);
@@ -155,13 +136,6 @@ const BangladeshLocationSearch: React.FC<BangladeshLocationSearchProps> = ({
   };
 
   const handleAreaSelect = (areaId: string, event?: React.MouseEvent) => {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    
-    console.log('Area selected:', areaId); // Debug log
-    
     onAreaChange(areaId);
     setAreaQuery('');
     setShowAreaDropdown(false);
@@ -254,7 +228,7 @@ const BangladeshLocationSearch: React.FC<BangladeshLocationSearchProps> = ({
   };
 
   return (
-    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ${className}`}>
+    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative z-50 ${className}`}>
       {/* Division */}
       <div className="relative" ref={divisionDropdownRef}>
         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -265,7 +239,11 @@ const BangladeshLocationSearch: React.FC<BangladeshLocationSearchProps> = ({
           <input
             ref={divisionInputRef}
             type="text"
-            value={selectedDivisionData ? (language === 'bn' ? selectedDivisionData.nameBn : selectedDivisionData.name) : divisionQuery}
+            value={divisionQuery !== ''
+              ? divisionQuery
+              : selectedDivisionData
+                ? (language === 'bn' ? selectedDivisionData.nameBn : selectedDivisionData.name)
+                : ''}
             onChange={(e) => {
               setDivisionQuery(e.target.value);
               setShowDivisionDropdown(true);
@@ -288,14 +266,13 @@ const BangladeshLocationSearch: React.FC<BangladeshLocationSearchProps> = ({
         </div>
 
         {showDivisionDropdown && (
-          <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+          <div className="absolute z-[99999] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-y-auto">
             {divisions.length > 0 ? (
               divisions.map((division, index) => (
                 <button
                   key={division.id}
                   type="button"
                   onClick={(e) => handleDivisionSelect(division.id, e)}
-                  onMouseDown={(e) => e.preventDefault()} // Prevent input blur
                   className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 cursor-pointer transition-colors duration-150"
                 >
                   <div className="font-medium text-gray-900">
@@ -347,12 +324,11 @@ const BangladeshLocationSearch: React.FC<BangladeshLocationSearchProps> = ({
         {showDistrictDropdown && selectedDivision && (
           <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-y-auto">
             {districts.length > 0 ? (
-              districts.map((district) => (
+              districts.map((district, index) => (
                 <button
                   key={district.id}
                   type="button"
                   onClick={(e) => handleDistrictSelect(district.id, e)}
-                  onMouseDown={(e) => e.preventDefault()}
                   className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 cursor-pointer transition-colors duration-150"
                 >
                   <div className="font-medium text-gray-900">
@@ -404,12 +380,11 @@ const BangladeshLocationSearch: React.FC<BangladeshLocationSearchProps> = ({
         {showThanaDropdown && selectedDistrict && (
           <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-y-auto">
             {thanas.length > 0 ? (
-              thanas.map((thana) => (
+              thanas.map((thana, index) => (
                 <button
                   key={thana.id}
                   type="button"
                   onClick={(e) => handleThanaSelect(thana.id, e)}
-                  onMouseDown={(e) => e.preventDefault()}
                   className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 cursor-pointer transition-colors duration-150"
                 >
                   <div className="font-medium text-gray-900">
@@ -435,7 +410,7 @@ const BangladeshLocationSearch: React.FC<BangladeshLocationSearchProps> = ({
           <input
             ref={areaInputRef}
             type="text"
-            value={selectedAreaData ? (language === 'bn' ? selectedAreaData.nameBn : selectedAreaData.name) : areaQuery}
+            value={selectedAreaData || areaQuery}
             onChange={(e) => {
               setAreaQuery(e.target.value);
               setShowAreaDropdown(true);
@@ -461,53 +436,18 @@ const BangladeshLocationSearch: React.FC<BangladeshLocationSearchProps> = ({
         {showAreaDropdown && selectedThana && (
           <div className="absolute z-[9999] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-y-auto">
             {areas.length > 0 ? (
-              <>
-                {/* Popular areas first */}
-                {areas.filter(area => area.popular).length > 0 && (
-                  <>
-                    <div className="px-4 py-2 text-xs font-medium text-gray-500 bg-gray-50 sticky top-0">
-                      {t('popular-areas', 'জনপ্রিয় এলাকা', 'Popular Areas')}
-                    </div>
-                    {areas.filter(area => area.popular).map((area) => (
-                      <button
-                        key={area.id}
-                        type="button"
-                        onClick={(e) => handleAreaSelect(area.id, e)}
-                        onMouseDown={(e) => e.preventDefault()}
-                        className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 cursor-pointer transition-colors duration-150"
-                      >
-                        <div className="font-medium text-gray-900">
-                          {language === 'bn' ? area.nameBn : area.name}
-                        </div>
-                      </button>
-                    ))}
-                  </>
-                )}
-                
-                {/* Other areas */}
-                {areas.filter(area => !area.popular).length > 0 && (
-                  <>
-                    {areas.filter(area => area.popular).length > 0 && (
-                      <div className="px-4 py-2 text-xs font-medium text-gray-500 bg-gray-50 sticky top-0">
-                        {t('other-areas', 'অন্যান্য এলাকা', 'Other Areas')}
-                      </div>
-                    )}
-                    {areas.filter(area => !area.popular).map((area) => (
-                      <button
-                        key={area.id}
-                        type="button"
-                        onClick={(e) => handleAreaSelect(area.id, e)}
-                        onMouseDown={(e) => e.preventDefault()}
-                        className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 cursor-pointer transition-colors duration-150"
-                      >
-                        <div className="font-medium text-gray-900">
-                          {language === 'bn' ? area.nameBn : area.name}
-                        </div>
-                      </button>
-                    ))}
-                  </>
-                )}
-              </>
+              areas.map((area, index) => (
+                <button
+                  key={area}
+                  type="button"
+                  onClick={(e) => handleAreaSelect(area, e)}
+                  className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 cursor-pointer transition-colors duration-150"
+                >
+                  <div className="font-medium text-gray-900">
+                    {area}
+                  </div>
+                </button>
+              ))
             ) : (
               <div className="px-4 py-3 text-gray-500 text-center">
                 {t('no-areas-found', 'কোন এলাকা পাওয়া যায়নি', 'No areas found')}
