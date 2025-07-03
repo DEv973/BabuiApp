@@ -163,9 +163,20 @@ const HomePage: React.FC = () => {
             <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl">
               <SearchFilters
                 filters={filters}
+<<<<<<< HEAD
                 onFiltersChange={setFilters}
                 onSearch={handleSearch}
                 showMainSearch={true}
+=======
+                onFiltersChange={(newFilters) => {
+                  console.log('setFilters called with:', newFilters);
+                  setFilters(newFilters);
+                }}
+                onSearch={handleSearch}
+                showMainSearch={true}
+                showAdvancedFilters={showAdvancedFilters}
+                onToggleAdvancedFilters={() => setShowAdvancedFilters((prev) => !prev)}
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
               />
             </div>
           </div>
@@ -179,7 +190,14 @@ const HomePage: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-lg border border-amber-200 overflow-hidden">
               <SearchFilters
                 filters={filters}
+<<<<<<< HEAD
                 onFiltersChange={setFilters}
+=======
+                onFiltersChange={(newFilters) => {
+                  console.log('setFilters called with:', newFilters);
+                  setFilters(newFilters);
+                }}
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
                 onSearch={handleSearch}
                 showMainSearch={false}
               />
@@ -203,6 +221,7 @@ const HomePage: React.FC = () => {
                 )}
               </h2>
             </div>
+<<<<<<< HEAD
             
             <button
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
@@ -213,6 +232,8 @@ const HomePage: React.FC = () => {
                 : t('show-advanced', 'উন্নত ফিল্টার দেখান', 'Show Advanced')
               }
             </button>
+=======
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
           </div>
           
           <div className="flex items-center gap-2 bg-amber-50 rounded-xl p-1 border border-amber-200">

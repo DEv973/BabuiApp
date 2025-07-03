@@ -10,7 +10,11 @@ interface PropertyFormData {
   description: string;
   descriptionBn: string;
   price: number;
+<<<<<<< HEAD
   type: 'apartment' | 'house' | 'room' | 'studio' | '';
+=======
+  type: 'apartment' | 'house' | 'room' | 'studio';
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
   bedrooms: number;
   bathrooms: number;
   area: number;
@@ -28,6 +32,7 @@ interface PropertyFormData {
   contactNameBn: string;
   contactPhone: string;
   contactEmail: string;
+<<<<<<< HEAD
   floorNumber?: string;
   balcony?: string;
   elevator?: string;
@@ -38,6 +43,8 @@ interface PropertyFormData {
   attachedBathroom?: string;
   kitchenAccess?: string;
   ownerType?: string;
+=======
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
 }
 
 const AddPropertyPage: React.FC = () => {
@@ -49,7 +56,11 @@ const AddPropertyPage: React.FC = () => {
     description: '',
     descriptionBn: '',
     price: 0,
+<<<<<<< HEAD
     type: '',
+=======
+    type: 'apartment',
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
     bedrooms: 1,
     bathrooms: 1,
     area: 0,
@@ -66,6 +77,7 @@ const AddPropertyPage: React.FC = () => {
     contactName: '',
     contactNameBn: '',
     contactPhone: '',
+<<<<<<< HEAD
     contactEmail: '',
     floorNumber: '',
     balcony: '',
@@ -77,6 +89,9 @@ const AddPropertyPage: React.FC = () => {
     attachedBathroom: '',
     kitchenAccess: '',
     ownerType: ''
+=======
+    contactEmail: ''
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
   });
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -92,10 +107,20 @@ const AddPropertyPage: React.FC = () => {
 
   const commonAmenities = [
     { value: 'ac', labelBn: 'এয়ার কন্ডিশনার', labelEn: 'Air Conditioning' },
+<<<<<<< HEAD
     { value: 'security', labelBn: 'নিরাপত্তা', labelEn: 'Security' },
     { value: 'internet', labelBn: 'ইন্টারনেট', labelEn: 'Internet' },
     { value: 'kitchen', labelBn: 'রান্নাঘর', labelEn: 'Kitchen' },
     { value: 'balcony', labelBn: 'বারান্দা', labelEn: 'Balcony' },
+=======
+    { value: 'parking', labelBn: 'পার্কিং', labelEn: 'Parking' },
+    { value: 'security', labelBn: 'নিরাপত্তা', labelEn: 'Security' },
+    { value: 'elevator', labelBn: 'লিফট', labelEn: 'Elevator' },
+    { value: 'internet', labelBn: 'ইন্টারনেট', labelEn: 'Internet' },
+    { value: 'kitchen', labelBn: 'রান্নাঘর', labelEn: 'Kitchen' },
+    { value: 'balcony', labelBn: 'বারান্দা', labelEn: 'Balcony' },
+    { value: 'furnished', labelBn: 'সাজানো', labelEn: 'Furnished' },
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
     { value: 'gas', labelBn: 'গ্যাস', labelEn: 'Gas Connection' },
     { value: 'generator', labelBn: 'জেনারেটর', labelEn: 'Generator' },
     { value: 'cctv', labelBn: 'সিসিটিভি', labelEn: 'CCTV' },
@@ -208,6 +233,7 @@ const AddPropertyPage: React.FC = () => {
                   );
                 })}
               </div>
+<<<<<<< HEAD
 
               {/* Apartment details fields for Apartment only */}
               {formData.type === 'apartment' && (
@@ -400,6 +426,11 @@ const AddPropertyPage: React.FC = () => {
             </h2>
 
             {/* Title and Description */}
+=======
+            </div>
+
+            {/* Title */}
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -429,6 +460,10 @@ const AddPropertyPage: React.FC = () => {
               </div>
             </div>
 
+<<<<<<< HEAD
+=======
+            {/* Description */}
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -457,6 +492,7 @@ const AddPropertyPage: React.FC = () => {
                 />
               </div>
             </div>
+<<<<<<< HEAD
 
             {/* Image Upload Fields */}
             <div>
@@ -509,6 +545,82 @@ const AddPropertyPage: React.FC = () => {
                   </div>
                 </div>
               )}
+=======
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6">
+            <h2 className="text-xl font-bold text-gray-900">
+              {t('property-details', 'সম্পত্তির বিবরণ', 'Property Details')}
+            </h2>
+
+            {/* Price */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <DollarSign className="inline w-4 h-4 mr-1" />
+                {t('monthly-rent', 'মাসিক ভাড়া (টাকা)', 'Monthly Rent (BDT)')} *
+              </label>
+              <input
+                type="number"
+                value={formData.price}
+                onChange={(e) => handleInputChange('price', Number(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                placeholder="25000"
+                required
+              />
+            </div>
+
+            {/* Room Details */}
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Bed className="inline w-4 h-4 mr-1" />
+                  {t('bedrooms', 'শোবার ঘর', 'Bedrooms')} *
+                </label>
+                <select
+                  value={formData.bedrooms}
+                  onChange={(e) => handleInputChange('bedrooms', Number(e.target.value))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  required
+                >
+                  {[1, 2, 3, 4, 5].map(num => (
+                    <option key={num} value={num}>{num}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Bath className="inline w-4 h-4 mr-1" />
+                  {t('bathrooms', 'বাথরুম', 'Bathrooms')} *
+                </label>
+                <select
+                  value={formData.bathrooms}
+                  onChange={(e) => handleInputChange('bathrooms', Number(e.target.value))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  required
+                >
+                  {[1, 2, 3, 4].map(num => (
+                    <option key={num} value={num}>{num}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Square className="inline w-4 h-4 mr-1" />
+                  {t('area-sqft', 'এলাকা (বর্গফুট)', 'Area (sqft)')} *
+                </label>
+                <input
+                  type="number"
+                  value={formData.area}
+                  onChange={(e) => handleInputChange('area', Number(e.target.value))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  placeholder="1200"
+                  required
+                />
+              </div>
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
             </div>
 
             {/* Additional Details */}
@@ -652,6 +764,7 @@ const AddPropertyPage: React.FC = () => {
                 />
               </div>
             </div>
+<<<<<<< HEAD
 
             {/* Google Map Direction Button */}
             <div className="flex justify-end mt-4">
@@ -669,6 +782,8 @@ const AddPropertyPage: React.FC = () => {
                 Google Map Direction
               </button>
             </div>
+=======
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
           </div>
         );
 
@@ -738,6 +853,7 @@ const AddPropertyPage: React.FC = () => {
               </div>
             </div>
 
+<<<<<<< HEAD
             {/* Owner/Agent Type */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Owner/Agent Type</label>
@@ -751,6 +867,61 @@ const AddPropertyPage: React.FC = () => {
                 <option value="owner">Owner</option>
                 <option value="agent">Agent</option>
               </select>
+=======
+            {/* Property Images */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                {t('upload-images', 'ছবি আপলোড করুন', 'Upload Images')} (সর্বোচ্চ ১০টি) *
+              </label>
+              
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                <Camera className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                <div className="space-y-2">
+                  <label className="cursor-pointer">
+                    <span className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors">
+                      {t('choose-images', 'ছবি নির্বাচন করুন', 'Choose Images')}
+                    </span>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                  <p className="text-sm text-gray-500">
+                    {t('image-formats', 'JPG, PNG, WebP (সর্বোচ্চ 5MB প্রতিটি)', 'JPG, PNG, WebP (Max 5MB each)')}
+                  </p>
+                </div>
+              </div>
+
+              {/* Image Preview */}
+              {formData.images.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="text-sm font-medium text-gray-700 mb-3">
+                    {t('selected-images', 'নির্বাচিত ছবি', 'Selected Images')} ({formData.images.length}/10)
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {formData.images.map((image, index) => (
+                      <div key={index} className="relative">
+                        <img
+                          src={URL.createObjectURL(image)}
+                          alt={`Property ${index + 1}`}
+                          className="w-full h-32 object-cover rounded-lg"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+>>>>>>> f49d559ffa514f8f519a91c26d11ae909d984793
             </div>
           </div>
         );
